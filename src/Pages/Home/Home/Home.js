@@ -6,6 +6,9 @@ import Services from '../Services/Services';
 const Home = () => {
     return (
         <>
+            <Helmet>
+                <title>About - Genius Car Service</title>
+            </Helmet>
             <Banner />
             <Services />
             <Experts />
