@@ -5,17 +5,16 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import auth from '../../../firebase.init';
 import Loading from '../../Shared/Loading/Loading';
 import SocialLogin from '../SocialLogin/SocialLogin';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import PageTitle from '../../Shared/PageTitle/PageTitle';
+import axios from 'axios';
+import useToken from '../../../hooks/useToken';
 
 
 const Login = () => {
     const emailRef = useRef('');
     const passwordRef = useRef('');
-    const navigate = useNavigate('');
-    const location = useLocation();
-    let from = location.state?.from?.pathname || '/';
     const [
         signInWithEmailAndPassword,
         user,
@@ -23,10 +22,15 @@ const Login = () => {
         error,
     ] = useSignInWithEmailAndPassword(auth);
     const [sendPasswordResetEmail, sending] = useSendPasswordResetEmail(auth);
+    const [token] = useToken(user);
 
-    if (user) {
+    const navigate = useNavigate('');
+    const location = useLocation();
+    let from = location.state?.from?.pathname || '/';
+    if (token) {
         navigate(from, { replace: true });
     }
+
     let errorElement;
     let loadingElement;
     if (error) {
@@ -37,11 +41,11 @@ const Login = () => {
     }
 
 
-    const handleSubmit = event => {
+    const handleSubmit = async event => {
         event.preventDefault();
         const email = emailRef.current.value;
         const password = passwordRef.current.value;
-        signInWithEmailAndPassword(email, password);
+        await signInWithEmailAndPassword(email, password);
     };
 
     const navigateRegister = () => {
@@ -84,7 +88,6 @@ const Login = () => {
 
             </div>
             <SocialLogin />
-            <ToastContainer />
         </div>
     );
 };
